@@ -1,0 +1,178 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.game-table {
+  min-height: 70vh;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hand-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hand-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.hand-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.hand-meta {
+  opacity: 0.8;
+}
+
+.hand-cards {
+  display: flex;
+  gap: 12px;
+}
+
+.card {
+  width: 72px;
+  height: 96px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  user-select: none;
+}
+
+.card--up {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.card--down {
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 0.8;
+}
+
+.hand-area--player {
+  margin-top: 8px;
+}
+
+.action-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.action-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: rgba(80, 180, 120, 0.35);
+  border-color: rgba(80, 180, 120, 0.55);
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+}
+
+.settings-modal {
+  box-shadow: -12px 0 30px rgba(0, 0, 0, 0.35);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-title {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.settings-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item span {
+  font-size: 18px;
+  opacity: 0.95;
+}
+
+.settings-footnote {
+  margin-top: auto;
+  opacity: 0.7;
+  font-size: 13px;
+}
