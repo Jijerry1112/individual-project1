@@ -1,16 +1,17 @@
 import Card from "./Card";
 
-export default function PlayerArea() {
+export default function PlayerArea({ hand = [], score }) {
   return (
     <section className="hand-area">
       <header className="hand-header">
         <h2 className="hand-title">Player</h2>
-        <div className="hand-meta">Score: 16</div>
+        <div className="hand-meta">Score: {score ?? 0}</div>
       </header>
 
       <div className="hand-cards">
-        <Card label="6♠" />
-        <Card label="Q♦" />
+        {hand.map((label, i) => (
+          <Card key={`${label}-${i}`} label={label} />
+        ))}
       </div>
     </section>
   );
