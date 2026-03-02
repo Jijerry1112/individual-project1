@@ -1,10 +1,19 @@
+import { useContext, useMemo } from "react";
+import { LanguageContext } from "../context/LanguageContext";
+import en from "../context/en";
+import zh from "../context/zh";
+
 export default function ActionBar({
   onHit,
   onStand,
-  onDeal,
-  onOpenSettings,
+  onDouble,
   disableHit = false,
+  disableStand = false,
+  disableDouble = true,
 }) {
+  const { language } = useContext(LanguageContext);
+  const t = useMemo(() => (language === "zh" ? zh : en), [language]);
+
   return (
     <section className="action-bar">
       <div className="action-row">
@@ -12,26 +21,27 @@ export default function ActionBar({
           className="btn btn--primary"
           onClick={onHit}
           disabled={disableHit}
-          title={disableHit ? "Busted (over 21)" : "Draw a card"}
+          title={disableHit ? t.bustedTitle : t.hitTitle}
         >
-          Hit
+          {t.hit}
         </button>
 
-        <button className="btn" onClick={onStand}>
-          Stand
+        <button
+          className="btn"
+          onClick={onStand}
+          disabled={disableStand}
+          title={disableStand ? t.roundOverTitle : t.standTitle}
+        >
+          {t.stand}
         </button>
 
-        <button className="btn" disabled>
-          Double
-        </button>
-      </div>
-
-      <div className="action-row action-row--secondary">
-        <button className="btn btn--ghost" onClick={onDeal}>
-          Deal
-        </button>
-        <button className="btn btn--ghost" onClick={onOpenSettings}>
-          Settings
+        <button
+          className="btn"
+          onClick={onDouble}
+          disabled={disableDouble}
+          title={disableDouble ? t.doubleDisabledTitle : t.doubleTitle}
+        >
+          {t.double}
         </button>
       </div>
     </section>

@@ -1,4 +1,9 @@
+import { useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext";
+
 export default function SettingsModal({ open, onClose, settings, setSettings }) {
+  const { language, setLanguage } = useContext(LanguageContext);
+
   if (!open) return null;
 
   const toggle = (key) => {
@@ -16,6 +21,17 @@ export default function SettingsModal({ open, onClose, settings, setSettings }) 
         </header>
 
         <ul className="settings-list">
+          <li className="settings-item">
+            <span>Language</span>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </select>
+          </li>
+
           <li className="settings-item">
             <span>Sound</span>
             <input
