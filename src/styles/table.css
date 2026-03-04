@@ -1,1 +1,171 @@
+/* Root layout */
+#root {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 18px;
+}
 
+/* Table / main panel */
+.game-table {
+  min-height: 70vh;
+  border-radius: 18px;
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  border: 1px solid var(--border);
+
+  /* darker base + centered felt oval */
+  background:
+    radial-gradient(1200px 520px at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(900px 700px at 50% 60%, rgba(0, 0, 0, 0.55), transparent 55%),
+    radial-gradient(900px 520px at 50% 48%,
+      rgba(33, 132, 79, 0.75) 0%,
+      rgba(22, 96, 56, 0.78) 45%,
+      rgba(14, 56, 34, 0.90) 78%,
+      rgba(10, 18, 22, 0.95) 100%
+    ),
+    linear-gradient(180deg, rgba(10, 14, 18, 0.92), rgba(9, 12, 16, 0.96));
+
+  box-shadow:
+    0 16px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Top bar */
+.topbar {
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: rgba(8, 12, 18, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+}
+
+.topbar__left,
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__center {
+  flex: 1;
+  text-align: center;
+  font-weight: 750;
+  letter-spacing: 0.2px;
+  opacity: 0.95;
+  min-height: 1.2em;
+}
+
+.topbar__sep { opacity: 0.35; }
+
+.topbar__label {
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* Hands */
+.hand-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 6px;
+}
+
+.hand-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.hand-title {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+
+.hand-meta {
+  opacity: 0.78;
+  font-weight: 650;
+}
+
+/* THIS is the key part you’re missing (fixes vertical stacking) */
+.hand-cards {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Cards */
+.playing-card {
+  width: 90px;
+  height: 120px;
+  border-radius: 14px;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.playing-card:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.08);
+}
+
+.playing-card--up {
+  background: rgba(10, 14, 18, 0.32);
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.playing-card--down {
+  background: rgba(10, 14, 18, 0.22);
+  color: rgba(255, 255, 255, 0.55);
+  opacity: 0.92;
+}
+
+/* Action bar (layout only; button visuals in button.css) */
+.action-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 4px;
+}
+
+.action-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Small screens */
+@media (max-width: 520px) {
+  #root { padding: 18px 12px; }
+  .playing-card { width: 76px; height: 106px; font-size: 22px; }
+  .hand-title { font-size: 20px; }
+}

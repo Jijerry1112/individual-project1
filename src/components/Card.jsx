@@ -1,6 +1,10 @@
 export default function Card({ label = "Card", faceDown = false }) {
   return (
-    <div className={`card ${faceDown ? "card--down" : "card--up"}`}>
+    <div
+      className={`playing-card ${
+        faceDown ? "playing-card--down" : "playing-card--up"
+      }`}
+    >
       {faceDown ? "🂠" : label}
     </div>
   );

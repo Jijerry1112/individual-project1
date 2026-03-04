@@ -2,8 +2,9 @@ import { useContext, useMemo } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../context/en";
 import zh from "../context/zh";
+import Card from "./Card";
 
-export default function PlayerArea({ hand, score }) {
+export default function PlayerArea({ hand = [], score = 0 }) {
   const { language } = useContext(LanguageContext);
   const t = useMemo(() => (language === "zh" ? zh : en), [language]);
 
@@ -18,13 +19,7 @@ export default function PlayerArea({ hand, score }) {
 
       <div className="hand-cards">
         {hand.map((rank, index) => (
-          <div
-            key={`${rank}-${index}`}
-            className="card card--up"
-            aria-label={`Card ${rank}`}
-          >
-            {rank}
-          </div>
+          <Card key={`${rank}-${index}`} label={rank} faceDown={false} />
         ))}
       </div>
     </section>

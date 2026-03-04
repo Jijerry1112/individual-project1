@@ -2,8 +2,9 @@ import { useContext, useMemo } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import en from "../context/en";
 import zh from "../context/zh";
+import Card from "./Card";
 
-export default function DealerArea({ hand, hidden, score }) {
+export default function DealerArea({ hand = [], hidden = false, score = null }) {
   const { language } = useContext(LanguageContext);
   const t = useMemo(() => (language === "zh" ? zh : en), [language]);
 
@@ -18,15 +19,13 @@ export default function DealerArea({ hand, hidden, score }) {
 
       <div className="hand-cards">
         {hand.map((rank, index) => {
-          const faceDown = hidden && index === 1;
+          const faceDown = hidden && index === 1; // 第二张盖住
           return (
-            <div
+            <Card
               key={`${rank}-${index}`}
-              className={`card ${faceDown ? "card--down" : "card--up"}`}
-              aria-label={faceDown ? "Hidden card" : `Card ${rank}`}
-            >
-              {faceDown ? "🂠" : rank}
-            </div>
+              label={rank}
+              faceDown={faceDown}
+            />
           );
         })}
       </div>

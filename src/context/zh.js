@@ -18,7 +18,6 @@ export default {
   scoreLabel: "点数",
   playerLabel: "玩家",
   dealerLabel: "庄家",
-  doubleHint: "加倍 = 下注翻倍 + 只再抽 1 张牌 + 然后自动停牌。",
   youBustedDealerWins: "你爆牌了，庄家赢。",
   dealerBustedYouWin: "庄家爆牌，你赢了！",
   youWin: "你赢了！",

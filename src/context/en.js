@@ -18,7 +18,6 @@ export default {
   scoreLabel: "Score",
   playerLabel: "Player",
   dealerLabel: "Dealer",
-  doubleHint: "Double = bet x2, draw exactly 1 card, then stand.",
   youBustedDealerWins: "You busted. Dealer wins.",
   dealerBustedYouWin: "Dealer busted. You win!",
   youWin: "You win!",
