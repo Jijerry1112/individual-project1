@@ -32,16 +32,23 @@ The goal was to recreate the gameplay logic and layout structure rather than rep
 
 ## Features Implemented
 
-- Interactive Deal button to start a new round
-- Hit functionality (adds card to player hand)
-- Stand functionality (dealer auto-draw logic)
+- Interactive **Deal** button to start a new round
+- **Hit** functionality (adds card to player hand)
+- **Stand** functionality (dealer auto-draw logic)
 - Automatic score calculation
 - Dynamic Ace value handling
 - Bust detection
 - Result display (Win / Lose / Push)
-- Bankroll system
-- Controlled Settings modal (React-managed checkboxes)
-- Responsive layout structure
+
+Additional features added beyond the base layout:
+
+- Bankroll system with betting
+- **High score tracking**
+- **Records leaderboard (Top scores)**
+- Settings modal with configurable options
+- Language switching (English / Chinese)
+- Responsive layout and UI polish
+- Card dealing animation
 
 ---
 
@@ -52,12 +59,14 @@ The goal was to recreate the gameplay logic and layout structure rather than rep
 Game state is managed using React’s `useState` hook.
 
 Key state includes:
+
 - Player hand
 - Dealer hand
 - Deck of cards
 - Game phase
 - Bankroll amount
 - Round result message
+- Records / high score
 
 State updates trigger re-renders to reflect gameplay changes in real time.
 
@@ -65,7 +74,7 @@ State updates trigger re-renders to reflect gameplay changes in real time.
 
 ### Context Usage
 
-The project uses React Context (`ModeContext`) to manage shared configuration settings across components and avoid excessive prop drilling.
+The project uses React Context to manage shared configuration settings across components (such as language selection), helping avoid excessive prop drilling.
 
 ---
 
@@ -73,7 +82,8 @@ The project uses React Context (`ModeContext`) to manage shared configuration se
 
 - `useState` – manage dynamic game state
 - `useEffect` – handle dealer drawing logic and round transitions
-- `useContext` – access global settings
+- `useContext` – access shared settings
+- `useMemo` – optimize language text selection
 
 ---
 
@@ -86,19 +96,18 @@ This project is implemented as a single-page application and does not use multip
 ## Live Site & Repository
 
 Live Site (GitHub Pages):  
-👉 [PASTE YOUR GITHUB PAGES LINK HERE]
+https://jijerry1112.github.io/individual-project1/
 
 Repository:  
-👉 [PASTE YOUR REPO LINK HERE]
-
+https://github.com/Jijerry1112/individual-project1
 ---
 
 ## Future Improvements
 
 If continued, I would improve:
 
-- Card dealing animations
-- UI polish and spacing refinement
+- Split hand support
+- Insurance gameplay logic
 - Sound effects
-- Multi-deck shoe logic
-- Persistent bankroll using localStorage
+- Improved card animations
+- More advanced strategy hints
