@@ -5,12 +5,14 @@ import zh from "../context/zh";
 
 export default function TopBar({
   bankroll,
+  highScore,
   bet,
   result,
   onDeal,
   onOpenSettings,
+  onOpenRecords,
   dealDisabled = false,
-  hint = "", // ✅ new
+  hint = "",
 }) {
   const { language } = useContext(LanguageContext);
   const t = useMemo(() => (language === "zh" ? zh : en), [language]);
@@ -23,12 +25,15 @@ export default function TopBar({
         </span>
         <span className="topbar__sep">|</span>
         <span className="topbar__label">
+          {t.highScoreLabel}: <strong>${highScore}</strong>
+        </span>
+        <span className="topbar__sep">|</span>
+        <span className="topbar__label">
           {t.betLabel}: <strong>${bet}</strong>
         </span>
       </div>
 
       <div className="topbar__center" aria-live="polite">
-        {/* ✅ 优先显示 result，没有就显示 hint */}
         {result || hint || "\u00A0"}
       </div>
 
@@ -41,6 +46,15 @@ export default function TopBar({
         >
           {t.deal}
         </button>
+
+        <button
+          className="btn btn--ghost"
+          onClick={onOpenRecords}
+          title={t.recordsTitle}
+        >
+          {t.records}
+        </button>
+
         <button className="btn btn--ghost" onClick={onOpenSettings}>
           {t.settings}
         </button>

@@ -1,37 +1,283 @@
-.modal-backdrop {
+/* ===== Modal Base ===== */
+
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  z-index: 100;
+
   display: flex;
-  justify-content: flex-end;
-  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
 }
 
-.settings-modal {
-  width: min(420px, 92vw);
-  height: 100%;
-  padding: 18px 18px 16px;
+.modal {
+  width: 420px;
+  max-width: 92vw;
 
-  background: rgba(15, 22, 32, 0.92);
-  border-left: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+  border-radius: 18px;
+  padding: 18px 20px;
+
+  background: rgba(16, 20, 24, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.settings-title {
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.modal__title {
   margin: 0;
   font-size: 22px;
+  font-weight: 850;
   letter-spacing: 0.2px;
 }
 
-.settings-item {
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.modal__content {
+  margin-bottom: 16px;
 }
-.settings-item:last-child { border-bottom: none; }
-.settings-item span { font-size: 16px; opacity: 0.95; }
 
-.settings-footnote {
-  margin-top: auto;
-  opacity: 0.7;
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ===== Records (Leaderboard) ===== */
+
+.records-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.records-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+
+  margin-bottom: 10px;
+
+  animation: recordFade 0.25s ease;
+}
+
+.records-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.records-medal {
+  width: 1.6em;
+  text-align: center;
+}
+
+.records-score {
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+
+.records-time {
+  opacity: 0.72;
   font-size: 13px;
+  white-space: nowrap;
+}
+
+.records-item--top1 {
+  border-color: rgba(255, 215, 0, 0.62);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.35);
+}
+
+.records-item--top2 {
+  border-color: rgba(190, 190, 190, 0.60);
+}
+
+.records-item--top3 {
+  border-color: rgba(205, 127, 50, 0.62);
+}
+
+.records-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.records-empty {
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* ===== Settings (Polish) ===== */
+
+.settings-modal {
+  width: 560px;
+  max-width: 92vw;
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.setting-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.setting-title {
+  font-weight: 850;
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+}
+
+.setting-desc {
+  opacity: 0.72;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.setting-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Select look */
+.setting-select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+
+  font-weight: 750;
+  letter-spacing: 0.2px;
+  outline: none;
+}
+
+.setting-select:focus {
+  border-color: rgba(80, 180, 120, 0.55);
+  box-shadow: 0 0 0 3px rgba(80, 180, 120, 0.18);
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-ui {
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  transition: background 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.toggle-ui::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translateY(-50%);
+
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+
+  transition: left 0.15s ease;
+}
+
+.toggle input:checked + .toggle-ui {
+  background: rgba(80, 180, 120, 0.26);
+  border-color: rgba(80, 180, 120, 0.48);
+}
+
+.toggle input:checked + .toggle-ui::after {
+  left: 26px;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 520px) {
+  .setting-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .setting-right {
+    justify-content: flex-start;
+  }
+
+  .records-time {
+    white-space: normal;
+    text-align: right;
+  }
+}
+
+/* ===== Animations ===== */
+
+@keyframes recordFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

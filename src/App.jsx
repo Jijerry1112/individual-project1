@@ -11,6 +11,7 @@ import DealerArea from "./components/DealerArea";
 import PlayerArea from "./components/PlayerArea";
 import ActionBar from "./components/ActionBar";
 import SettingsModal from "./components/SettingsModal";
+import RecordsModal from "./components/RecordsModal";
 
 function drawCard() {
   const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -23,7 +24,7 @@ function cardValue(rank) {
   return Number(rank);
 }
 
-// Best total <= 21 if possible + whether it's soft
+// best total <= 21 if possible
 function handInfo(hand) {
   let total = 0;
   let aces = 0;
@@ -33,25 +34,19 @@ function handInfo(hand) {
     if (r === "A") aces += 1;
   }
 
-  // convert A(11)->A(1) as needed
-  let conversions = 0;
   while (total > 21 && aces > 0) {
-    total -= 10;
+    total -= 10; // A(11) -> A(1)
     aces -= 1;
-    conversions += 1;
   }
 
-  const originalAces = hand.filter((r) => r === "A").length;
-  const isSoft = originalAces > conversions;
-
-  return { total, isSoft };
+  return { total };
 }
 
-function runDealerTurn(startHand, soft17Rule) {
+function runDealerTurn(startHand) {
   const d = [...startHand];
   let info = handInfo(d);
 
-  while (info.total < 17 || (soft17Rule && info.total === 17 && info.isSoft)) {
+  while (info.total < 17) {
     d.push(drawCard());
     info = handInfo(d);
   }
@@ -60,11 +55,14 @@ function runDealerTurn(startHand, soft17Rule) {
 }
 
 export default function App() {
-  // ✅ hooks must be INSIDE component
   const { language } = useContext(LanguageContext);
   const t = useMemo(() => (language === "zh" ? zh : en), [language]);
 
+  const INITIAL_BANKROLL = 100;
+  const baseBet = 10;
+
   const [showSettings, setShowSettings] = useState(false);
+  const [showRecords, setShowRecords] = useState(false);
 
   const [settings, setSettings] = useState({
     sound: true,
@@ -73,16 +71,70 @@ export default function App() {
     advice: false,
   });
 
-  // --- chips / betting ---
-  const baseBet = 10;
-  const [bankroll, setBankroll] = useState(100);
+  const [bankroll, setBankroll] = useState(INITIAL_BANKROLL);
   const [roundBet, setRoundBet] = useState(baseBet);
 
-  // --- round state ---
+  // ===== High Score (persist) =====
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem("blackjackHighScore");
+    const n = saved ? Number(saved) : NaN;
+    return Number.isFinite(n) ? n : INITIAL_BANKROLL;
+  });
+
+  // ===== Records (Top 5, persist) =====
+  const [records, setRecords] = useState(() => {
+    try {
+      const saved = localStorage.getItem("blackjackRecords");
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // update highScore + records only when bankroll becomes a NEW high score
+  useEffect(() => {
+    if (bankroll <= highScore) return;
+
+    const now = new Date().toLocaleString();
+    const newRecord = { bankroll, at: now };
+
+    const updated = [newRecord, ...records]
+      .filter((r) => Number.isFinite(Number(r?.bankroll)))
+      .sort((a, b) => Number(b.bankroll) - Number(a.bankroll))
+      .slice(0, 5);
+
+    setHighScore(bankroll);
+    setRecords(updated);
+
+    localStorage.setItem("blackjackHighScore", String(bankroll));
+    localStorage.setItem("blackjackRecords", JSON.stringify(updated));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bankroll]); // intentionally only depends on bankroll (simple + stable)
+
+  function clearRecords() {
+    setRecords([]);
+    localStorage.removeItem("blackjackRecords");
+  }
+
+  function resetHighScore(initial = INITIAL_BANKROLL) {
+
+  setHighScore(initial);
+
+  // reset
+  setRecords([]);
+
+  //  localStorage
+  localStorage.setItem("blackjackHighScore", String(initial));
+  localStorage.removeItem("blackjackRecords");
+
+}
+
+  // ===== Round state =====
   const [result, setResult] = useState("");
   const [roundOver, setRoundOver] = useState(true);
 
-  // --- hands ---
+  // ===== Hands =====
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [dealerHidden, setDealerHidden] = useState(true);
@@ -93,9 +145,6 @@ export default function App() {
   const playerScore = playerInfo.total;
   const dealerScore = dealerHidden ? null : dealerInfo.total;
 
-  const playerBusted = playerScore > 21;
-
-  // ---- localized settle text ----
   function settleText(pTotal, dTotal) {
     if (pTotal > 21) return t.youBustedDealerWins;
     if (dTotal > 21) return t.dealerBustedYouWin;
@@ -108,7 +157,7 @@ export default function App() {
     const text = settleText(pTotal, dTotal);
 
     // loss
-    if (pTotal > 21 || (pTotal <= 21 && dTotal <= 21 && pTotal < dTotal)) {
+    if (pTotal > 21 || (dTotal <= 21 && pTotal < dTotal)) {
       setBankroll((b) => b - betAmount);
       return text;
     }
@@ -145,37 +194,38 @@ export default function App() {
     startNewRound();
   }
 
-  // HIT: just draw
   function handleHit() {
     if (roundOver) return;
     setPlayerHand((prev) => [...prev, drawCard()]);
   }
 
-  // ✅ auto settle on bust using CURRENT hands (avoid stale dealerInfo)
+  // auto settle on bust
   useEffect(() => {
     if (roundOver) return;
     if (playerScore <= 21) return;
 
     setDealerHidden(false);
-    const dTotalNow = handInfo(dealerHand).total; // current dealer hand
-    const finalText = settleAndUpdateBankroll(playerScore, dTotalNow, roundBet);
-    setResult(finalText);
+
+    const dTotalNow = handInfo(dealerHand).total;
+    const text = settleAndUpdateBankroll(playerScore, dTotalNow, roundBet);
+
+    setResult(text);
     setRoundOver(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerScore, roundOver]);
+  }, [playerScore]);
 
   function handleStand() {
     if (roundOver) return;
 
     setDealerHidden(false);
 
-    const { dealerFinalHand, dealerTotal } = runDealerTurn(dealerHand, settings.soft17);
+    const { dealerFinalHand, dealerTotal } = runDealerTurn(dealerHand);
     const pTotal = handInfo(playerHand).total;
 
-    const finalText = settleAndUpdateBankroll(pTotal, dealerTotal, roundBet);
+    const text = settleAndUpdateBankroll(pTotal, dealerTotal, roundBet);
 
     setDealerHand(dealerFinalHand);
-    setResult(finalText);
+    setResult(text);
     setRoundOver(true);
   }
 
@@ -185,7 +235,6 @@ export default function App() {
 
     const doubled = roundBet * 2;
 
-    // bankroll is total cash, but you only "pay" after result in this simplified version
     if (bankroll < doubled) {
       setResult(t.notEnoughToDouble);
       return;
@@ -203,32 +252,33 @@ export default function App() {
     // bust after double
     if (pTotal > 21) {
       const dTotalNow = handInfo(dealerHand).total;
-      const finalText = settleAndUpdateBankroll(pTotal, dTotalNow, doubled);
-      setResult(finalText);
+      const text = settleAndUpdateBankroll(pTotal, dTotalNow, doubled);
+      setResult(text);
       setRoundOver(true);
       return;
     }
 
-    const { dealerFinalHand, dealerTotal } = runDealerTurn(dealerHand, settings.soft17);
-    const finalText = settleAndUpdateBankroll(pTotal, dealerTotal, doubled);
+    const { dealerFinalHand, dealerTotal } = runDealerTurn(dealerHand);
+    const text = settleAndUpdateBankroll(pTotal, dealerTotal, doubled);
 
     setDealerHand(dealerFinalHand);
-    setResult(finalText);
+    setResult(text);
     setRoundOver(true);
   }
 
   const disableDeal = !roundOver;
-  const disableDouble = roundOver || playerHand.length !== 2 || bankroll < roundBet * 2;
 
   return (
     <>
       <GameTable>
         <TopBar
           bankroll={bankroll}
+          highScore={highScore}
           bet={roundBet}
           result={result}
           hint={t.doubleHint}
           onDeal={handleDeal}
+          onOpenRecords={() => setShowRecords(true)}
           onOpenSettings={() => setShowSettings(true)}
           dealDisabled={disableDeal}
         />
@@ -240,9 +290,9 @@ export default function App() {
           onHit={handleHit}
           onStand={handleStand}
           onDouble={handleDouble}
-          disableHit={roundOver || playerBusted}
+          disableHit={roundOver}
           disableStand={roundOver}
-          disableDouble={disableDouble}
+          disableDouble={roundOver || playerHand.length !== 2}
         />
       </GameTable>
 
@@ -251,6 +301,15 @@ export default function App() {
         onClose={() => setShowSettings(false)}
         settings={settings}
         setSettings={setSettings}
+      />
+
+      <RecordsModal
+        open={showRecords}
+        onClose={() => setShowRecords(false)}
+        records={records}
+        onClear={clearRecords}
+        onResetHighScore={resetHighScore}
+        initialBankroll={INITIAL_BANKROLL}
       />
     </>
   );
