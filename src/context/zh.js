@@ -34,7 +34,7 @@ export default {
   pushTie: "平局（Push）。",
 
   // misc
-  outOfChips: "筹码不够了！",
+  outOfChips: "筹码不足！",
   notEnoughToDouble: "筹码不足，无法加倍。",
   doubleHint: "加倍 = 下注翻倍 + 只抽1张牌 + 自动停牌。",
 
@@ -48,21 +48,39 @@ export default {
   close: "关闭",
   done: "完成",
 
-  // settings modal (new)
+  // settings modal
   languageLabel: "语言",
   languageDesc: "切换界面语言。",
   languageEnglish: "English",
   languageChinese: "中文",
 
   soundLabel: "音效",
-  soundDesc: "开启/关闭音效。",
+  soundDesc: "开启或关闭音效。",
 
   soft17Label: "庄家软17要牌",
   soft17Desc: "更难的规则（赌场常见）。",
 
   insuranceLabel: "保险",
-  insuranceDesc: "可选边注（目前仅开关）。",
+  insuranceDesc: "可选边注（当前仅UI开关）。",
 
   adviceLabel: "自动提示",
-  adviceDesc: "显示简单提示（目前仅开关）。",
+  adviceDesc: "显示简单提示（当前仅UI开关）。",
+
+  // ===== Bet Panel =====
+
+  betPanelAriaLabel: "下注控制",
+
+  betPanelBetLabel: "下注",
+
+  betPanelBankLabel: "筹码",
+
+  betPanelReset: "重置",
+  betPanelResetTitle: "重置为最小下注",
+
+  betPanelAllIn: "全押",
+  betPanelAllInTitle: "使用全部筹码下注",
+
+  betPanelSetBetTitle: "设置下注为",
+
+  betPanelNotEnoughTitle: "筹码不足",
 };

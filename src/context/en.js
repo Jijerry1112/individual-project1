@@ -44,11 +44,12 @@ export default {
   clearRecords: "Clear Records",
   noRecordsToClearTitle: "There are no records to clear.",
   resetHighScore: "Reset High Score",
-  resetHighScoreTitle: "Reset the saved high score back to the starting bankroll.",
+  resetHighScoreTitle:
+    "Reset the saved high score back to the starting bankroll.",
   close: "Close",
   done: "Done",
 
-  // settings modal (new)
+  // settings modal
   languageLabel: "Language",
   languageDesc: "Switch the UI language.",
   languageEnglish: "English",
@@ -65,4 +66,22 @@ export default {
 
   adviceLabel: "Auto advice",
   adviceDesc: "Show simple hints (toggle only).",
+
+  // ===== Bet Panel =====
+
+  betPanelAriaLabel: "Bet controls",
+
+  betPanelBetLabel: "Bet",
+
+  betPanelBankLabel: "Bank",
+
+  betPanelReset: "Reset",
+  betPanelResetTitle: "Reset bet to minimum",
+
+  betPanelAllIn: "All In",
+  betPanelAllInTitle: "Bet your entire bankroll",
+
+  betPanelSetBetTitle: "Set bet to",
+
+  betPanelNotEnoughTitle: "Not enough bankroll",
 };

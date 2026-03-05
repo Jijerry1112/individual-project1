@@ -17,17 +17,32 @@ export default function TopBar({
   const { language } = useContext(LanguageContext);
   const t = useMemo(() => (language === "zh" ? zh : en), [language]);
 
+  // Decide glow class based on the current result text (in the current language)
+  const outcomeClass = useMemo(() => {
+    if (!result) return "";
+
+    if (result === t.youWin || result === t.dealerBustedYouWin) return "win";
+    if (result === t.dealerWins || result === t.youBustedDealerWins) return "lose";
+    if (result === t.pushTie) return "push";
+
+    return "";
+  }, [result, t]);
+
   return (
-    <header className="topbar">
+    <header className={`topbar ${outcomeClass}`} aria-label="Top bar">
       <div className="topbar__left">
         <span className="topbar__label">
           {t.bankrollLabel}: <strong>${bankroll}</strong>
         </span>
+
         <span className="topbar__sep">|</span>
+
         <span className="topbar__label">
           {t.highScoreLabel}: <strong>${highScore}</strong>
         </span>
+
         <span className="topbar__sep">|</span>
+
         <span className="topbar__label">
           {t.betLabel}: <strong>${bet}</strong>
         </span>
@@ -43,6 +58,7 @@ export default function TopBar({
           onClick={onDeal}
           disabled={dealDisabled}
           title={dealDisabled ? t.dealDisabledTitle : t.dealTitle}
+          type="button"
         >
           {t.deal}
         </button>
@@ -51,11 +67,17 @@ export default function TopBar({
           className="btn btn--ghost"
           onClick={onOpenRecords}
           title={t.recordsTitle}
+          type="button"
         >
           {t.records}
         </button>
 
-        <button className="btn btn--ghost" onClick={onOpenSettings}>
+        <button
+          className="btn btn--ghost"
+          onClick={onOpenSettings}
+          title={t.settings}
+          type="button"
+        >
           {t.settings}
         </button>
       </div>

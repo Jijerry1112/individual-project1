@@ -16,7 +16,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
 
   border: 1px solid var(--border);
 
@@ -31,7 +31,7 @@
     inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
-/* ===== Top Bar ===== */
+/* ===== TopBar ===== */
 
 .topbar {
   position: sticky;
@@ -49,6 +49,22 @@
   background: rgba(8,12,18,0.55);
   border: 1px solid rgba(255,255,255,0.10);
   backdrop-filter: blur(10px);
+
+  transition: box-shadow .25s ease;
+}
+
+/* ===== Result Glow ===== */
+
+.topbar.win {
+  box-shadow: 0 0 16px rgba(60,220,120,0.7);
+}
+
+.topbar.lose {
+  box-shadow: 0 0 16px rgba(255,70,70,0.7);
+}
+
+.topbar.push {
+  box-shadow: 0 0 16px rgba(200,200,200,0.5);
 }
 
 .topbar__left,
@@ -82,7 +98,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 10px 6px;
+  padding: 8px 6px;
 }
 
 .hand-header {
@@ -102,8 +118,6 @@
   font-weight: 650;
 }
 
-/* cards container */
-
 .hand-cards {
   display: flex;
   gap: 12px;
@@ -114,7 +128,6 @@
 /* ===== Playing Cards ===== */
 
 .playing-card {
-
   width: 90px;
   height: 120px;
 
@@ -125,7 +138,6 @@
 
   font-size: 26px;
   font-weight: 800;
-  letter-spacing: .3px;
 
   border: 1px solid rgba(255,255,255,0.14);
 
@@ -151,20 +163,131 @@
 .playing-card--down {
   background: rgba(10,14,18,0.22);
   color: rgba(255,255,255,0.55);
-  opacity: .92;
+}
+
+/* ===== Bet Panel ===== */
+
+.bet-panel {
+  display: grid;
+  grid-template-columns: 170px 1fr 170px;
+  gap: 12px;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(8,12,18,0.22);
+}
+
+.bet-panel__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bet-panel__label {
+  opacity: .75;
+  font-weight: 800;
+}
+
+.bet-panel__value {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.bet-panel__bank {
+  opacity: .7;
+  font-size: 13px;
+}
+
+.bet-panel__chips {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ===== Casino Chips ===== */
+
+.chip {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+
+  font-weight: 900;
+  font-size: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: white;
+
+  border: 3px solid rgba(255,255,255,0.35);
+
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.35),
+    inset 0 2px 0 rgba(255,255,255,0.25);
+
+  transition:
+    transform .12s ease,
+    filter .12s ease,
+    box-shadow .12s ease;
+}
+
+.chip:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.chip:active {
+  transform: scale(.95);
+}
+
+.chip:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+/* chip colors */
+
+.chip:nth-child(1) {
+  background: linear-gradient(145deg,#d62b2b,#a31212);
+}
+
+.chip:nth-child(2) {
+  background: linear-gradient(145deg,#2fb84f,#0e7a2a);
+}
+
+.chip:nth-child(3) {
+  background: linear-gradient(145deg,#2f6ed8,#123a9a);
+}
+
+.chip:nth-child(4) {
+  background: linear-gradient(145deg,#2c2c2c,#000000);
+}
+
+.chip:nth-child(5) {
+  background: linear-gradient(145deg,#7a2fd8,#4b149a);
+}
+
+.chip--active {
+  box-shadow:
+    0 0 12px rgba(80,180,120,0.6),
+    0 6px 16px rgba(0,0,0,0.35);
+}
+
+.bet-panel__right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 /* ===== Action Bar ===== */
 
 .action-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 6px;
-  padding-top: 4px;
-}
-
-.action-row {
   display: flex;
   justify-content: center;
   gap: 12px;
@@ -174,7 +297,6 @@
 /* ===== Animations ===== */
 
 @keyframes cardDeal {
-
   from {
     opacity: 0;
     transform: translateY(-20px) scale(.92);
@@ -188,38 +310,33 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-
 }
 
 /* ===== Responsive ===== */
 
-@media (max-width: 520px) {
+@media (max-width:680px) {
+
+  .bet-panel {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width:520px) {
 
   #root {
-    padding: 18px 12px;
+    padding:18px 12px;
   }
 
   .playing-card {
-    width: 76px;
-    height: 106px;
-    font-size: 22px;
+    width:76px;
+    height:106px;
+    font-size:22px;
   }
 
-  .hand-title {
-    font-size: 20px;
-  }
-
-  .topbar {
-    flex-wrap: wrap;
-  }
-
-  .topbar__left {
-    flex-wrap: wrap;
-  }
-
-  .topbar__center {
-    order: 3;
-    flex-basis: 100%;
+  .chip {
+    width:44px;
+    height:44px;
   }
 
 }

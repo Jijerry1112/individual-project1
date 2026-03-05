@@ -12,6 +12,7 @@ import PlayerArea from "./components/PlayerArea";
 import ActionBar from "./components/ActionBar";
 import SettingsModal from "./components/SettingsModal";
 import RecordsModal from "./components/RecordsModal";
+import BetPanel from "./components/BetPanel";
 
 function drawCard() {
   const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -72,6 +73,11 @@ export default function App() {
   });
 
   const [bankroll, setBankroll] = useState(INITIAL_BANKROLL);
+
+  // ✅ pendingBet: user-selected bet BEFORE the round starts (chips / all-in)
+  const [pendingBet, setPendingBet] = useState(baseBet);
+
+  // ✅ roundBet: locked bet for the current active round
   const [roundBet, setRoundBet] = useState(baseBet);
 
   // ===== High Score (persist) =====
@@ -92,6 +98,16 @@ export default function App() {
     }
   });
 
+  // ✅ clamp pendingBet whenever bankroll changes (only matters when round is NOT active)
+  // If bankroll drops below baseBet, pendingBet can drop too (you can't deal anyway).
+  useEffect(() => {
+    setPendingBet((b) => {
+      const maxBet = Math.max(0, bankroll);
+      const next = Math.min(b, maxBet);
+      return next;
+    });
+  }, [bankroll]);
+
   // update highScore + records only when bankroll becomes a NEW high score
   useEffect(() => {
     if (bankroll <= highScore) return;
@@ -99,18 +115,20 @@ export default function App() {
     const now = new Date().toLocaleString();
     const newRecord = { bankroll, at: now };
 
-    const updated = [newRecord, ...records]
-      .filter((r) => Number.isFinite(Number(r?.bankroll)))
-      .sort((a, b) => Number(b.bankroll) - Number(a.bankroll))
-      .slice(0, 5);
-
     setHighScore(bankroll);
-    setRecords(updated);
-
     localStorage.setItem("blackjackHighScore", String(bankroll));
-    localStorage.setItem("blackjackRecords", JSON.stringify(updated));
+
+    setRecords((prev) => {
+      const updated = [newRecord, ...(Array.isArray(prev) ? prev : [])]
+        .filter((r) => Number.isFinite(Number(r?.bankroll)))
+        .sort((a, b) => Number(b.bankroll) - Number(a.bankroll))
+        .slice(0, 5);
+
+      localStorage.setItem("blackjackRecords", JSON.stringify(updated));
+      return updated;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bankroll]); // intentionally only depends on bankroll (simple + stable)
+  }, [bankroll]); // intentionally only depends on bankroll
 
   function clearRecords() {
     setRecords([]);
@@ -118,17 +136,11 @@ export default function App() {
   }
 
   function resetHighScore(initial = INITIAL_BANKROLL) {
-
-  setHighScore(initial);
-
-  // reset
-  setRecords([]);
-
-  //  localStorage
-  localStorage.setItem("blackjackHighScore", String(initial));
-  localStorage.removeItem("blackjackRecords");
-
-}
+    setHighScore(initial);
+    setRecords([]);
+    localStorage.setItem("blackjackHighScore", String(initial));
+    localStorage.removeItem("blackjackRecords");
+  }
 
   // ===== Round state =====
   const [result, setResult] = useState("");
@@ -173,14 +185,6 @@ export default function App() {
   }
 
   function startNewRound() {
-    if (bankroll < baseBet) {
-      setResult(t.outOfChips);
-      setRoundOver(true);
-      setDealerHidden(false);
-      return;
-    }
-
-    setRoundBet(baseBet);
     setResult("");
     setRoundOver(false);
 
@@ -189,8 +193,42 @@ export default function App() {
     setDealerHidden(true);
   }
 
+  // ✅ bet helpers (chips / all in)
+  function setSafePendingBet(value) {
+    if (!roundOver) return;
+
+    const maxBet = Math.max(0, bankroll);
+    const v = Math.max(baseBet, Math.min(maxBet, Number(value) || 0));
+    setPendingBet(v);
+  }
+
+  function handleAllIn() {
+    if (!roundOver) return;
+    const maxBet = Math.max(0, bankroll);
+    setSafePendingBet(maxBet);
+  }
+
+  function handleResetBet() {
+    if (!roundOver) return;
+    // if bankroll < baseBet, we keep it clamped in setSafePendingBet
+    setSafePendingBet(baseBet);
+  }
+
   function handleDeal() {
     if (!roundOver) return;
+
+    if (bankroll < baseBet) {
+      setResult(t.outOfChips);
+      setRoundOver(true);
+      setDealerHidden(false);
+      return;
+    }
+
+    // ✅ lock bet for this round
+    const maxBet = Math.max(0, bankroll);
+    const locked = Math.max(baseBet, Math.min(maxBet, pendingBet));
+
+    setRoundBet(locked);
     startNewRound();
   }
 
@@ -267,6 +305,7 @@ export default function App() {
   }
 
   const disableDeal = !roundOver;
+  const displayBet = roundOver ? pendingBet : roundBet;
 
   return (
     <>
@@ -274,7 +313,7 @@ export default function App() {
         <TopBar
           bankroll={bankroll}
           highScore={highScore}
-          bet={roundBet}
+          bet={displayBet}
           result={result}
           hint={t.doubleHint}
           onDeal={handleDeal}
@@ -285,6 +324,16 @@ export default function App() {
 
         <DealerArea hand={dealerHand} hidden={dealerHidden} score={dealerScore} />
         <PlayerArea hand={playerHand} score={playerScore} />
+
+        {/* ✅ Bet controls (chips + all in) */}
+        <BetPanel
+          bankroll={bankroll}
+          pendingBet={pendingBet}
+          onSetBet={setSafePendingBet}
+          onAllIn={handleAllIn}
+          onReset={handleResetBet}
+          disabled={!roundOver}
+        />
 
         <ActionBar
           onHit={handleHit}
